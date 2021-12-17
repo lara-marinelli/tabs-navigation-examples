@@ -16,7 +16,6 @@ export default function AppList() {
     { id: 9, quantidade: 0.5, descricao: "lentilha" },
     { id: 10, quantidade: 1, descricao: "massa" },
     { id: 11, quantidade: 1, descricao: "katchup" },
-    { id: 6, quantidade: 1, descricao: "queijo-ralado" },
   ]);
 
   return (
