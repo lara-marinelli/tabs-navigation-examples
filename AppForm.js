@@ -7,11 +7,18 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import Database from "./Database";
 
-export default function AppForm({ navigation }) {
+export default function AppForm({ route, navigation }) {
+  const id = route.params ? route.params.id : undefined;
   const [descricao, setDescricao] = useState("");
   const [quantidade, setQuantidade] = useState("");
+
+  useEffect(() => {
+    if (!route.params) return;
+    setDescricao(route.params.descricao);
+    setQuantidade(route.params.quantidade.toString());
+  }, [route]);
 
   function handleDescriptionChange(descricao) {
     setDescricao(descricao);
@@ -19,7 +26,7 @@ export default function AppForm({ navigation }) {
   function handleQuantityChange(quantidade) {
     setQuantidade(quantidade);
   }
-  async function handleButtonPress() {
+  async function handleButtonPress_old() {
     const listItem = {
       id: new Date().getTime(),
       descricao,
@@ -35,6 +42,13 @@ export default function AppForm({ navigation }) {
     navigation.navigate("AppList", listItem);
   }
 
+  async function handleButtonPress() {
+    const listItem = { descricao, quantidade: parseInt(quantidade) };
+    Database.saveItem(listItem, id).then((response) =>
+      navigation.navigate("AppList", listItem)
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Item para comprar</Text>
@@ -44,6 +58,7 @@ export default function AppForm({ navigation }) {
           onChangeText={handleDescriptionChange}
           placeholder="O que está faltando em casa?"
           clearButtonMode="always"
+          value={descricao}
         />
         <TextInput
           style={styles.input}
@@ -51,6 +66,7 @@ export default function AppForm({ navigation }) {
           placeholder="Digite a quantidade"
           keyboardType={"numeric"}
           clearButtonMode="always"
+          value={quantidade.toString()}
         />
         <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
           <Text style={styles.buttonText}>Salvar</Text>
