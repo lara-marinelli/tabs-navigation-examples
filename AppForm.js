@@ -11,13 +11,15 @@ import Database from "./Database";
 
 export default function AppForm({ route, navigation }) {
   const id = route.params ? route.params.id : undefined;
+  const desc = route.params ? route.params.descricao : "";
+  const quant = route.params ? route.params.quantidade : "";
+
   const [descricao, setDescricao] = useState("");
   const [quantidade, setQuantidade] = useState("");
 
   useEffect(() => {
-    if (!route.params) return;
-    setDescricao(route.params.descricao);
-    setQuantidade(route.params.quantidade.toString());
+    setDescricao(desc);
+    setQuantidade(quant.toString());
   }, [route]);
 
   function handleDescriptionChange(descricao) {
@@ -44,6 +46,9 @@ export default function AppForm({ route, navigation }) {
 
   async function handleButtonPress() {
     const listItem = { descricao, quantidade: parseInt(quantidade) };
+    route = "";
+    setDescricao("");
+    setQuantidade("");
     Database.saveItem(listItem, id).then((response) =>
       navigation.navigate("AppList", listItem)
     );
